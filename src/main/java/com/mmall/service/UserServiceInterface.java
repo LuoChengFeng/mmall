@@ -1,5 +1,9 @@
 package com.mmall.service;
 
-public class UserServiceInterface
+import com.mmall.common.ServletResponse;
+import com.mmall.pojo.User;
+
+public interface UserServiceInterface
 {
+    ServletResponse<User> Login(String username, String password);
 }
