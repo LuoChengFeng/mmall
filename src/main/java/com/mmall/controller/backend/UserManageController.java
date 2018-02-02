@@ -1,4 +1,4 @@
-package com.mmall.controller;
+package com.mmall.controller.backend;
 
 import com.mmall.common.Constant;
 import com.mmall.common.ServletResponse;
@@ -13,22 +13,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping(value="/user/")
-public class UserController
-{
-
+@RequestMapping("/manage/user/")
+public class UserManageController {
     @Autowired
     private UserServiceInterface userServiceInterface;
 
-    @RequestMapping(value="login.do",method = RequestMethod.POST)
+    @RequestMapping(value = "login.do",method = RequestMethod.POST)
     public @ResponseBody ServletResponse<User> Login(String username, String password, HttpSession session){
-
-        ServletResponse<User> response = userServiceInterface.Login(username,password);
-
+        ServletResponse<User> response = userServiceInterface.Login(username, password);
         if(response.isSuccess()){
-            session.setAttribute(Constant.Constant_User,response.getData());
+            User user = response.getData();
+            if(Constant.Role.ROLE_ADMIN == user.getRole()){
+                session.setAttribute(Constant.Constant_User,user);
+                return response;
+            }
+            else{
+                return ServletResponse.createByErrorMessage("该用户非管理员，无法登录");
+            }
         }
         return response;
     }
-
 }

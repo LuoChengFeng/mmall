@@ -65,10 +65,10 @@
       <if test="role != null" >
         role,
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time,
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         update_time,
       </if>
     </trim>
@@ -97,12 +97,13 @@
       <if test="role != null" >
         #{role,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        <if test="createTime != null" >
+            #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null" >
+            #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.User" >
@@ -132,9 +133,10 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      <if test="updateTime != null">
+          update_time = now(),
       </if>
+
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -156,8 +158,28 @@
     select count(1) from mmall_user where username=#{username}
   </select>
 
+  <select id="checkUserByEmail" parameterType="string" resultType="int">
+    select count(1) from mmall_user where email=#{email}
+  </select>
+
   <select id="selectUser" resultMap="BaseResultMap" >
     select * from mmall_user where username=#{username} and password = #{password}
+  </select>
+
+  <select id="selectForgetQuestion" resultType="string" parameterType="string">
+    select question from mmall_user where username=#{username}
+  </select>
+
+  <select id="selectAnswer" resultType="int">
+    select count(1) from mmall_user where username=#{username} and question=#{question} and answer=#{answer}
+  </select>
+
+  <update id="updatePasswordByUsername">
+    update mmall_user set password=#{password},update_time=now() where username=#{username}
+  </update>
+
+  <select id="checkEmailById" resultType="int">
+    select count(1) from mmall_user where email=#{email} and id!=#{id}
   </select>
 
 </mapper>
